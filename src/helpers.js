@@ -10,7 +10,7 @@
  */
 export function toBigNumber(number, defaultValue = null) {
 	if (typeof number === 'string' || typeof number === 'number') {
-		return new web3.BigNumber(number)
+		return new web3.utils.BN(number)
 	}
 	else if (number) {
 		return number
@@ -19,7 +19,7 @@ export function toBigNumber(number, defaultValue = null) {
 		return null
 	}
 	else {
-		return new web3.BigNumber(defaultValue)
+		return new web3.utils.BN(defaultValue)
 	}
 }
 

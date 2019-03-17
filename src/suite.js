@@ -3,7 +3,7 @@
 import { expectRevertOrFail, toBigNumber } from './helpers'
 
 const expect = require('chai')
-	.use(require('chai-bignumber')(web3.BigNumber))
+	.use(require('chai-bn')(web3.utils.BN))
 	.expect
 
 /**
@@ -86,8 +86,8 @@ module.exports = function (options) {
 	}
 
 	// setup
-	const tokens = function (amount) { return new web3.BigNumber(amount).shift(decimals) }
-	const uintMax = new web3.BigNumber(2).pow(256).minus(1)
+	const tokens = function (amount) { return new web3.utils.BN(amount).imul(new web3.utils.BN(10).pow(decimals)) }
+	const uintMax = new web3.utils.BN(2).pow(new web3.utils.BN(256)).subn(1)
 	const alice = accounts[1]
 	const bob = accounts[2]
 	const charles = accounts[3]
@@ -113,24 +113,24 @@ module.exports = function (options) {
 
 	describe('ERC-20', function () {
 		describe('totalSupply()', function () {
-			it('should have initial supply of ' + initialSupply.toFormat(), async function () {
+			it('should have initial supply of ' + initialSupply.toString(), async function () {
 				expect(await contract.totalSupply.call()).to.be.bignumber.equal(initialSupply)
 			})
 
 			it('should return the correct supply', async function () {
 				await credit(alice, tokens(1))
 				expect(await contract.totalSupply.call()).to.be.bignumber.equal(
-					creditIsMinting ? initialSupply.plus(tokens(1)) : initialSupply
+					creditIsMinting ? initialSupply.add(tokens(1)) : initialSupply
 				)
 
 				await credit(alice, tokens(2))
 				expect(await contract.totalSupply.call()).to.be.bignumber.equal(
-					creditIsMinting ? initialSupply.plus(tokens(3)) : initialSupply
+					creditIsMinting ? initialSupply.add(tokens(3)) : initialSupply
 				)
 
 				await credit(bob, tokens(3))
 				expect(await contract.totalSupply.call()).to.be.bignumber.equal(
-					creditIsMinting ? initialSupply.plus(tokens(6)) : initialSupply
+					creditIsMinting ? initialSupply.add(tokens(6)) : initialSupply
 				)
 			})
 		})
@@ -237,7 +237,7 @@ module.exports = function (options) {
 						expect(await contract.allowance(from, to)).to.be.bignumber.equal(tokens(3))
 
 						await contract.approve(to, 0, { from: from })
-						expect(await contract.allowance(from, to)).to.be.bignumber.equal(0)
+						expect(await contract.allowance(from, to)).to.be.bignumber.equal('0')
 					})
 
 					it('should fire Approval event', async function () {
@@ -268,7 +268,7 @@ module.exports = function (options) {
 				assert.equal(log.event, 'Approval')
 				assert.equal(log.args.owner, from)
 				assert.equal(log.args.spender, to)
-				expect(log.args.value).to.be.bignumber.equal(amount)
+				expect(log.args.value).to.be.bignumber.equal(toBigNumber(amount))
 			}
 		})
 
@@ -301,7 +301,7 @@ module.exports = function (options) {
 						await credit(from, tokens(3))
 						await expectRevertOrFail(contract.transfer(to, tokens(4), { from: from }))
 
-						await contract.transfer('0x1', tokens(1), { from: from })
+						await contract.transfer('0x0000000000000000000000000000000000000001', tokens(1), { from: from })
 						await expectRevertOrFail(contract.transfer(to, tokens(3), { from: from }))
 					})
 
@@ -326,8 +326,8 @@ module.exports = function (options) {
 							expect(fromBalance2).to.be.bignumber.equal(fromBalance1)
 						}
 						else {
-							expect(fromBalance2).to.be.bignumber.equal(fromBalance1.minus(tokens(1)))
-							expect(toBalance2).to.be.bignumber.equal(toBalance1.plus(tokens(1)))
+							expect(fromBalance2).to.be.bignumber.equal(fromBalance1.sub(tokens(1)))
+							expect(toBalance2).to.be.bignumber.equal(toBalance1.add(tokens(1)))
 						}
 
 						await contract.transfer(to, tokens(2), { from: from })
@@ -338,8 +338,8 @@ module.exports = function (options) {
 							expect(fromBalance3).to.be.bignumber.equal(fromBalance2)
 						}
 						else {
-							expect(fromBalance3).to.be.bignumber.equal(fromBalance2.minus(tokens(2)))
-							expect(toBalance3).to.be.bignumber.equal(toBalance2.plus(tokens(2)))
+							expect(fromBalance3).to.be.bignumber.equal(fromBalance2.sub(tokens(2)))
+							expect(toBalance3).to.be.bignumber.equal(toBalance2.add(tokens(2)))
 						}
 					})
 
@@ -363,7 +363,7 @@ module.exports = function (options) {
 				assert.equal(log.event, 'Transfer')
 				assert.equal(log.args.from, from)
 				assert.equal(log.args.to, to)
-				expect(log.args.value).to.be.bignumber.equal(amount)
+				expect(log.args.value).to.be.bignumber.equal(toBigNumber(amount))
 			}
 		})
 
@@ -446,8 +446,8 @@ module.exports = function (options) {
 							expect(fromBalance2).to.be.bignumber.equal(fromBalance1)
 						}
 						else {
-							expect(fromBalance2).to.be.bignumber.equal(fromBalance1.minus(tokens(1)))
-							expect(toBalance2).to.be.bignumber.equal(toBalance1.plus(tokens(1)))
+							expect(fromBalance2).to.be.bignumber.equal(fromBalance1.sub(tokens(1)))
+							expect(toBalance2).to.be.bignumber.equal(toBalance1.add(tokens(1)))
 						}
 
 						if (via != from && via != to) {
@@ -463,8 +463,8 @@ module.exports = function (options) {
 							expect(fromBalance3).to.be.bignumber.equal(fromBalance2)
 						}
 						else {
-							expect(fromBalance3).to.be.bignumber.equal(fromBalance2.minus(tokens(2)))
-							expect(toBalance3).to.be.bignumber.equal(toBalance2.plus(tokens(2)))
+							expect(fromBalance3).to.be.bignumber.equal(fromBalance2.sub(tokens(2)))
+							expect(toBalance3).to.be.bignumber.equal(toBalance2.add(tokens(2)))
 						}
 
 						if (via != from && via != to) {
@@ -481,7 +481,7 @@ module.exports = function (options) {
 						let viaAllowance2 = await contract.allowance.call(from, via)
 						let toAllowance2 = await contract.allowance.call(from, to)
 
-						expect(viaAllowance2).to.be.bignumber.equal(viaAllowance1.minus(tokens(2)))
+						expect(viaAllowance2).to.be.bignumber.equal(viaAllowance1.sub(tokens(2)))
 
 						if (to != via) {
 							expect(toAllowance2).to.be.bignumber.equal(toAllowance1)
@@ -491,7 +491,7 @@ module.exports = function (options) {
 						let viaAllowance3 = await contract.allowance.call(from, via)
 						let toAllowance3 = await contract.allowance.call(from, to)
 
-						expect(viaAllowance3).to.be.bignumber.equal(viaAllowance2.minus(tokens(1)))
+						expect(viaAllowance3).to.be.bignumber.equal(viaAllowance2.sub(tokens(1)))
 
 						if (to != via) {
 							expect(toAllowance3).to.be.bignumber.equal(toAllowance1)
@@ -518,7 +518,7 @@ module.exports = function (options) {
 				assert.equal(log.event, 'Transfer')
 				assert.equal(log.args.from, from)
 				assert.equal(log.args.to, to)
-				expect(log.args.value).to.be.bignumber.equal(amount)
+				expect(log.args.value).to.be.bignumber.equal(toBigNumber(amount))
 			}
 		})
 	})
@@ -591,11 +591,10 @@ module.exports = function (options) {
 
 				async function testApprovalEvent(from, to, fromAmount, byAmount) {
 					let result = await contract.increaseApproval(to, byAmount, { from: from })
-					let log = result.logs[0]
 					assert.equal(log.event, 'Approval')
 					assert.equal(log.args.owner, from)
 					assert.equal(log.args.spender, to)
-					expect(log.args.value).to.be.bignumber.equal(new web3.BigNumber(fromAmount).plus(byAmount))
+					expect(log.args.value).to.be.bignumber.equal(new web3.utils.BN(fromAmount).add(byAmount))
 				}
 			})
 
@@ -642,7 +641,7 @@ module.exports = function (options) {
 					assert.equal(log.event, 'Approval')
 					assert.equal(log.args.owner, from)
 					assert.equal(log.args.spender, to)
-					expect(log.args.value).to.be.bignumber.equal(new web3.BigNumber(fromAmount).minus(byAmount))
+					expect(log.args.value).to.be.bignumber.equal(new web3.utils.BN(fromAmount).sub(byAmount))
 				}
 			})
 		})
