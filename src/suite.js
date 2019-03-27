@@ -1,6 +1,6 @@
 'use strict'
 
-import { expectRevertOrFail, toBigNumber } from './helpers'
+import { expectRevertOrFail, bn } from './helpers'
 
 const expect = require('chai')
 	.use(require('chai-bn')(web3.utils.BN))
@@ -18,11 +18,11 @@ const expect = require('chai')
  *   Callback to transfer tokens with. Tokens must not be transferred from the account of index 1 or higher.
  * @property {TokenTransferOrMintCallback} [mint]
  *   Callback to mint tokens with.
- * @property {BigNumber|number} [initialSupply]
+ * @property {BN|number} [initialSupply]
  *   The initial token supply. Defaults to 0.
- * @property {[string, BigNumber|number][]} initialBalances
+ * @property {[string, BN|number][]} initialBalances
  *   The tuples (account, balance) of initial account balances. Defaults to [] (no initial balance testing).
- * @property {[string, string, BigNumber|number][]} initialAllowances
+ * @property {[string, string, BN|number][]} initialAllowances
  *   The tuples (owner, spender, allowance) of initial allowances. Defaults to [] (no initial allowance testing).
  * @property {string} [name]
  *   The expected token name (if not provided, name is not tested).
@@ -54,7 +54,7 @@ const expect = require('chai')
  * @callback TokenTransferOrMintCallback
  * @param {Object} token The token created by TokenCreateCallback to transfer tokens of.
  * @param {string} to Account of the beneficiary.
- * @param {BigNumber|number} amount The amount of the tokens to purchase.
+ * @param {BN|number} amount The amount of the tokens to purchase.
  */
 
 /**
@@ -68,7 +68,7 @@ module.exports = function (options) {
 	const accounts = options.accounts
 
 	// configure
-	const initialSupply = toBigNumber(options.initialSupply, 0)
+	const initialSupply = bn(options.initialSupply, 0)
 	const initialBalances = options.initialBalances || []
 	const initialAllowances = options.initialAllowances || []
 	const create = options.create
@@ -86,8 +86,8 @@ module.exports = function (options) {
 	}
 
 	// setup
-	const tokens = function (amount) { return new web3.utils.BN(amount).imul(new web3.utils.BN(10).pow(decimals)) }
-	const uintMax = new web3.utils.BN(2).pow(new web3.utils.BN(256)).subn(1)
+	const tokens = function (amount) { return bn(amount).imul(bn(10).pow(decimals)) }
+	const uintMax = bn(2).pow(bn(256)).subn(1)
 	const alice = accounts[1]
 	const bob = accounts[2]
 	const charles = accounts[3]
@@ -268,7 +268,7 @@ module.exports = function (options) {
 				assert.equal(log.event, 'Approval')
 				assert.equal(log.args.owner, from)
 				assert.equal(log.args.spender, to)
-				expect(log.args.value).to.be.bignumber.equal(toBigNumber(amount))
+				expect(log.args.value).to.be.bignumber.equal(bn(amount))
 			}
 		})
 
@@ -363,7 +363,7 @@ module.exports = function (options) {
 				assert.equal(log.event, 'Transfer')
 				assert.equal(log.args.from, from)
 				assert.equal(log.args.to, to)
-				expect(log.args.value).to.be.bignumber.equal(toBigNumber(amount))
+				expect(log.args.value).to.be.bignumber.equal(bn(amount))
 			}
 		})
 
@@ -518,7 +518,7 @@ module.exports = function (options) {
 				assert.equal(log.event, 'Transfer')
 				assert.equal(log.args.from, from)
 				assert.equal(log.args.to, to)
-				expect(log.args.value).to.be.bignumber.equal(toBigNumber(amount))
+				expect(log.args.value).to.be.bignumber.equal(bn(amount))
 			}
 		})
 	})
@@ -594,7 +594,7 @@ module.exports = function (options) {
 					assert.equal(log.event, 'Approval')
 					assert.equal(log.args.owner, from)
 					assert.equal(log.args.spender, to)
-					expect(log.args.value).to.be.bignumber.equal(new web3.utils.BN(fromAmount).add(byAmount))
+					expect(log.args.value).to.be.bignumber.equal(bn(fromAmount).add(byAmount))
 				}
 			})
 
@@ -641,7 +641,7 @@ module.exports = function (options) {
 					assert.equal(log.event, 'Approval')
 					assert.equal(log.args.owner, from)
 					assert.equal(log.args.spender, to)
-					expect(log.args.value).to.be.bignumber.equal(new web3.utils.BN(fromAmount).sub(byAmount))
+					expect(log.args.value).to.be.bignumber.equal(bn(fromAmount).sub(byAmount))
 				}
 			})
 		})
