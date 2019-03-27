@@ -525,7 +525,7 @@ module.exports = function (options) {
 
 	describe('ERC-20 optional', function () {
 		describe('name()', function () {
-			if (typeof options.name !== 'undefined') {
+			if (options.name != null ) {
 				it("should return '" + options.name + "'", async function () {
 					assert.equal(await contract.name.call(), options.name)
 				})
@@ -533,7 +533,7 @@ module.exports = function (options) {
 		})
 
 		describe('symbol()', function () {
-			if (typeof options.symbol !== 'undefined') {
+			if (options.symbol != null) {
 				it("should return '" + options.symbol + "'", async function () {
 					assert.equal(await contract.symbol.call(), options.symbol)
 				})
@@ -541,9 +541,9 @@ module.exports = function (options) {
 		})
 
 		describe('decimals()', function () {
-			if (typeof options.decimals !== 'undefined') {
+			if (options.decimals != null) {
 				it("should return '" + options.decimals + "'", async function () {
-					expect(await contract.decimals.call()).to.be.bignumber.equal(options.decimals)
+					expect(await contract.decimals.call()).to.be.bignumber.equal(bn(options.decimals))
 				})
 			}
 		})
