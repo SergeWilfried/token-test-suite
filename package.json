@@ -5,7 +5,7 @@
 	"contributors": [
 		"Michal Novák (https://www.weborama.cz/)"
 	],
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"license": "MIT",
 	"main": "lib/suite.js",
 	"repository": "github:mancze/token-test-suite",
