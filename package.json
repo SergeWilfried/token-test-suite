@@ -10,9 +10,9 @@
 	"main": "lib/suite.js",
 	"repository": "github:CryptoverseRocks/token-test-suite",
 	"devDependencies": {
-		"babel-cli": "^6.26.0",
-		"babel-core": "^6.26.0",
-		"babel-preset-es2015": "^6.24.1",
+		"@babel/cli": "^7.0.0",
+		"@babel/core": "^7.0.0",
+		"@babel/preset-env": "^7.0.0",
 		"chai": "^4.1.0",
 		"chai-bn": "^0.1.0"
 	},
@@ -25,7 +25,7 @@
 	},
 	"babel": {
 		"presets": [
-			"es2015"
+			"@babel/preset-env"
 		]
 	}
 }
