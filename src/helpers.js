@@ -1,26 +1,21 @@
 'use strict'
 
 /**
- * Converts given value to BigNumber object if it is number or string. Otherwise defaultValue is
+ * Converts given value to BN object if it is number or string. Otherwise defaultValue is
  * returned in case given value is not truthy.
  *
- * @param {number|string|BigNumber|null} number
- * @param {number|string|BigNumber|null} [defaultValue]
- * @returns {BigNumber|null}
+ * @param {number|string|BN|null} number
+ * @param {number|string|BN|null} [defaultValue]
+ * @returns {BN|null}
  */
-export function toBigNumber(number, defaultValue = null) {
-	if (typeof number === 'string' || typeof number === 'number') {
-		return new web3.BigNumber(number)
+export function bn(number, defaultValue = null) {
+	if (number == null) {
+		if (defaultValue == null) {
+			return null;
+		}
+		number = defaultValue;
 	}
-	else if (number) {
-		return number
-	}
-	else if (defaultValue == null) {
-		return null
-	}
-	else {
-		return new web3.BigNumber(defaultValue)
-	}
+	return web3.utils.toBN(number);
 }
 
 /**
