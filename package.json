@@ -8,7 +8,7 @@
 	"version": "0.0.3",
 	"license": "MIT",
 	"main": "lib/suite.js",
-	"repository": "github:CryptoverseRocks/token-test-suite",
+	"repository": "github:mancze/token-test-suite",
 	"devDependencies": {
 		"@babel/cli": "^7.0.0",
 		"@babel/core": "^7.0.0",
